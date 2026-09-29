@@ -1,8 +1,8 @@
-# Velocity OS
+# BizzRepp
 
 ### The Unified Lead-to-Cash Command Center for Multi-Vertical Enterprises
 
-Velocity OS runs the **complete commercial lifecycle for hardware-plus-service bundles** on a single backbone — unifying **Lead-to-Order (L2O)**, **Order-to-Delivery (O2D)**, and **Delivery-to-Cash (D2C)** into one source of truth. It's architected to flex across multiple verticals — connectivity, digital signage, surveillance — on a single data model, so pipeline, fulfillment, and revenue never drift apart across spreadsheets and disconnected tools.
+BizzRepp runs the **complete commercial lifecycle for hardware-plus-service bundles** on a single backbone — unifying **Lead-to-Order (L2O)**, **Order-to-Delivery (O2D)**, and **Delivery-to-Cash (D2C)** into one source of truth. It's architected to flex across multiple verticals — connectivity, digital signage, surveillance — on a single data model, so pipeline, fulfillment, and revenue never drift apart across spreadsheets and disconnected tools.
 
 *An independent product & program management build — conceived and architected by Aditya Mishra.*
 
@@ -16,7 +16,7 @@ Commercial teams selling bundled hardware and services lose money to **fragmenta
 - **Tribal forecasting** — deals prioritized on intuition instead of live metrics.
 - **Handoff gaps** — fulfillment details living outside the CRM, so what sales sold and what delivery installs quietly diverge.
 
-Velocity OS closes all three by putting the entire lead-to-cash journey on one governed data model with server-enforced rules.
+BizzRepp closes all three by putting the entire lead-to-cash journey on one governed data model with server-enforced rules.
 
 ## The core journey — Lead to Cash
 
@@ -46,7 +46,7 @@ A three-tier, fully self-hosted stack — no dependency on any external hosted d
 
 ### 1) Database
 ```sql
-CREATE DATABASE velocity_os CHARACTER SET utf8mb4;
+CREATE DATABASE bizzrepp CHARACTER SET utf8mb4;
 ```
 Schema is created by **versioned SQL migration files** in `backend/migrations/`, tracked in a `schema_migrations` table — `sequelize.sync()` is **not** used. Migrations run automatically on `npm run dev`/`start`/`seed`, or standalone via `npm run migrate`. To change the schema later, add a new numbered file (`002_xxx.sql`) — never edit `001_initial_schema.sql` after it's been applied anywhere.
 
@@ -90,21 +90,21 @@ cp .env.example .env   # fill in real DB creds + a strong JWT_SECRET
 Run under a process manager so it survives reboots/crashes:
 ```bash
 npm install -g pm2
-pm2 start server.js --name velocity-os-api
+pm2 start server.js --name bizzrepp-api
 pm2 save
 pm2 startup   # follow the printed instructions to enable on boot
 ```
-Or as a systemd unit (`/etc/systemd/system/velocity-os-api.service`):
+Or as a systemd unit (`/etc/systemd/system/bizzrepp-api.service`):
 ```ini
 [Unit]
-Description=Velocity OS API
+Description=BizzRepp API
 After=network.target mysql.service
 
 [Service]
-WorkingDirectory=/opt/velocity-os/backend
+WorkingDirectory=/opt/bizzrepp/backend
 ExecStart=/usr/bin/node server.js
 Restart=always
-EnvironmentFile=/opt/velocity-os/backend/.env
+EnvironmentFile=/opt/bizzrepp/backend/.env
 User=www-data
 
 [Install]
@@ -125,10 +125,10 @@ Put both behind one nginx vhost so the browser only ever talks to one origin (av
 ```nginx
 server {
     listen 80;
-    server_name velocity.yourcompany.internal;
+    server_name bizzrepp.yourcompany.internal;
 
     # React static build
-    root /opt/velocity-os/frontend/build;
+    root /opt/bizzrepp/frontend/build;
     index index.html;
     location / {
         try_files $uri /index.html;   # SPA fallback for react-router
@@ -150,7 +150,7 @@ server {
     client_max_body_size 25m;   # PO document uploads are capped at 20MB server-side
 }
 ```
-Add TLS with certbot (`certbot --nginx -d velocity.yourcompany.internal`) once DNS points here.
+Add TLS with certbot (`certbot --nginx -d bizzrepp.yourcompany.internal`) once DNS points here.
 
 ### Database
 - Point `backend/.env` at your production MySQL instance (a managed instance or a separate DB server — not the same box as the API, ideally).
@@ -173,7 +173,7 @@ The frontend needs no `.env` in production if served from the same nginx origin 
 
 ## Capabilities
 
-Velocity OS covers the full commercial lifecycle end to end:
+BizzRepp covers the full commercial lifecycle end to end:
 
 - **Leads (L2O)** — table + Kanban (drag-and-drop phase change), search, multi-filter (phase/rating/source/owner), bulk reassign/phase-change, **Excel + PDF export**
 - **Lead form** — full field set in a guided order (Lead Info → Competitor → **Services** with per-service rate + qty → Deal Size incl. **PO Validity** → Phase & Timeline with **±2-day phase-date editing** → Contacts → PO upload → **rich-text Notes**)
@@ -250,7 +250,7 @@ Both verified against real generated output: the PDF export was checked by captu
 
 ## Project layout
 ```
-velocity-os/
+bizzrepp/
 ├── backend/
 │   ├── server.js              # boot: middleware → routes → run migrations → listen
 │   ├── config/database.js     # Sequelize instance
@@ -278,4 +278,4 @@ velocity-os/
 
 ---
 
-*Velocity OS — conceived and architected by Aditya Mishra · Product & Program Management.*
+*BizzRepp — conceived and architected by Aditya Mishra · Product & Program Management.*
